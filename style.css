@@ -1,7 +1,13 @@
 .toolbox{
     border-radius: 0 0 10px 10px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.8);
+    background-color: #575555;
 }
-.backCustom{
-    background-color: #f3f2f1;
+
+.tool{
+    cursor: pointer;
+}
+
+.tool:hover{
+    transform: scale(1.2);
 }
