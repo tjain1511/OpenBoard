@@ -7,11 +7,10 @@ canvas.width = window.innerWidth;
 let initialXPosition;
 let initialYPosition;
 let drawing = false;
+let mode = "pen";
 
 let xdeviation = canvas.offsetLeft;
 let ydeviation = canvas.offsetTop;
-
-// let ydeviation = canvas.getBoundingClientRect().y;
 let redo_list = [];
 let undo_list = [];
 function saveState(list, keep_redo) {
@@ -20,20 +19,14 @@ function saveState(list, keep_redo) {
         redo_list = [];
     }
 
-    // (list || undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height)); // (canvas.toDataUrl)
-    (list || undo_list).push(canvas.toDataURL());
+    (list || undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 function restoreState(pop, push) {
     if (pop.length) {
         saveState(push, true);
         var restore_state = pop.pop();
-        var img = document.createElement('img');
-        img.setAttribute('src', restore_state);
-        console.log(img);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-        // ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.putImageData(restore_state,0, 0);
+        ctx.putImageData(restore_state, 0, 0);
     }
 }
 function undo() {
@@ -52,6 +45,7 @@ canvas.addEventListener("mousedown", function (e) {
 
     ctx.beginPath();
     ctx.moveTo(initialXPosition, initialYPosition);
+
     saveState();
     drawing = true;
 
@@ -64,13 +58,28 @@ canvas.addEventListener("mousemove", function (e) {
     let finalY = e.clientY - ydeviation;
 
     if (drawing) {
-        ctx.lineTo(finalX, finalY);
-        ctx.stroke();
+        if (mode === "pen") {
+            ctx.strokeStyle = "#000000"
+            ctx.lineTo(finalX, finalY);
+            ctx.stroke();
+        } else if (mode === "eraser") {
+            ctx.strokeStyle = "#ffffff"
+            ctx.lineWidth = 25;
+            ctx.globalCompositeOperation = "source-atop";
+            ctx.lineTo(finalX, finalY);
+            ctx.stroke();
+        } else if (mode === "highlighter") {
+            ctx.strokeStyle = "#ff0";
+            ctx.lineWidth = 25;
+            ctx.globalCompositeOperation = "multiply";
+            ctx.lineTo(finalX, finalY);
+            ctx.stroke();
+        }
     }
 
 })
 
 canvas.addEventListener("mouseup", function (e) {
-
     drawing = false;
 })
+
