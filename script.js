@@ -7,12 +7,35 @@ canvas.width = window.innerWidth;
 let initialXPosition;
 let initialYPosition;
 let drawing = false;
-let mode = "pen";
+
+let penTool = document.querySelector("#pen");
+let eraserTool = document.querySelector("#eraser");
+let highlighterTool = document.querySelector("#highlighter");
+let undoTool = document.querySelector("#undo");
+let redoTool = document.querySelector("#redo");
+
+let mode;
+
+penTool.addEventListener("click",function(){
+    mode = "pen";
+})
+
+eraserTool.addEventListener("click",function(){
+    mode = "eraser";
+})
+
+highlighterTool.addEventListener("click",function(){
+    mode = "highlighter";
+})
+
+undoTool.addEventListener("click",undo);
+redoTool.addEventListener("click",redo);
 
 let xdeviation = canvas.offsetLeft;
 let ydeviation = canvas.offsetTop;
 let redo_list = [];
 let undo_list = [];
+
 function saveState(list, keep_redo) {
     keep_redo = keep_redo || false;
     if (!keep_redo) {
@@ -83,3 +106,14 @@ canvas.addEventListener("mouseup", function (e) {
     drawing = false;
 })
 
+
+window.addEventListener("keydown",function(e){
+
+    if(e.ctrlKey && e.key==='z'){
+        undo();
+    }
+    if(e.ctrlKey && e.key==='y'){
+        redo();
+    }
+    
+})
