@@ -11,4 +11,7 @@
 .tool:hover{
     transform: scale(1.2);
 }
+body{
+    cursor: crosshair;
+}
 
