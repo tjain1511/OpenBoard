@@ -14,6 +14,8 @@ let highlighterTool = document.querySelector("#highlighter");
 let undoTool = document.querySelector("#undo");
 let redoTool = document.querySelector("#redo");
 
+let download = document.querySelector("#download");
+
 let mode;
 
 penTool.addEventListener("click",function(){
@@ -30,6 +32,14 @@ highlighterTool.addEventListener("click",function(){
 
 undoTool.addEventListener("click",undo);
 redoTool.addEventListener("click",redo);
+
+download.addEventListener("click",function(){
+    let imgData = canvas.toDataURL();
+    let img = document.createElement('a');
+    img.setAttribute('href',imgData);
+    img.setAttribute('download',"download.jpeg");
+    img.click();
+})
 
 let xdeviation = canvas.offsetLeft;
 let ydeviation = canvas.offsetTop;
