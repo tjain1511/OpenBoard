@@ -82,7 +82,9 @@ canvas.addEventListener("mousemove", function (e) {
 
     if (drawing) {
         if (mode === "pen") {
-            ctx.strokeStyle = "#000000"
+            ctx.strokeStyle = "#000000";
+            ctx.globalCompositeOperation = "source-over";
+            ctx.lineWidth = 5;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "eraser") {
