@@ -17,10 +17,15 @@ let redoTool = document.querySelector("#redo");
 let download = document.querySelector("#download");
 let reset = document.querySelector("#reset");
 let bucket = document.querySelector("#bucket");
+let sizeSlider = document.querySelector("#size");
 
 let mode;
 let color = '#000000';
+let size = 5;
 
+sizeSlider.addEventListener("input",function(e){
+    size = e.target.value;
+})
 
 reset.addEventListener("click",function(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -106,7 +111,7 @@ canvas.addEventListener("mousemove", function (e) {
         if (mode === "pen") {
             ctx.strokeStyle = color;
             ctx.globalCompositeOperation = "source-over";
-            ctx.lineWidth = 5;
+            ctx.lineWidth = size;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "eraser") {
