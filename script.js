@@ -15,15 +15,19 @@ let undoTool = document.querySelector("#undo");
 let redoTool = document.querySelector("#redo");
 
 let download = document.querySelector("#download");
+let reset = document.querySelector("#reset");
 let bucket = document.querySelector("#bucket");
 
 let mode;
 let color = '#000000';
 
 
+reset.addEventListener("click",function(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+})
+
 bucket.addEventListener("input",function(e){
     color = e.target.value;
-
 })
 
 penTool.addEventListener("click",function(){
