@@ -15,8 +15,16 @@ let undoTool = document.querySelector("#undo");
 let redoTool = document.querySelector("#redo");
 
 let download = document.querySelector("#download");
+let bucket = document.querySelector("#bucket");
 
 let mode;
+let color = '#000000';
+
+
+bucket.addEventListener("input",function(e){
+    color = e.target.value;
+
+})
 
 penTool.addEventListener("click",function(){
     mode = "pen";
@@ -92,7 +100,7 @@ canvas.addEventListener("mousemove", function (e) {
 
     if (drawing) {
         if (mode === "pen") {
-            ctx.strokeStyle = "#000000";
+            ctx.strokeStyle = color;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = 5;
             ctx.lineTo(finalX, finalY);
