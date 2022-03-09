@@ -23,39 +23,39 @@ let mode;
 let color = '#000000';
 let size = 5;
 
-sizeSlider.addEventListener("input",function(e){
+sizeSlider.addEventListener("input", function (e) {
     size = e.target.value;
 })
 
-reset.addEventListener("click",function(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+reset.addEventListener("click", function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     saveState();
 })
 
-bucket.addEventListener("input",function(e){
+bucket.addEventListener("input", function (e) {
     color = e.target.value;
 })
 
-penTool.addEventListener("click",function(){
+penTool.addEventListener("click", function () {
     mode = "pen";
 })
 
-eraserTool.addEventListener("click",function(){
+eraserTool.addEventListener("click", function () {
     mode = "eraser";
 })
 
-highlighterTool.addEventListener("click",function(){
+highlighterTool.addEventListener("click", function () {
     mode = "highlighter";
 })
 
-undoTool.addEventListener("click",undo);
-redoTool.addEventListener("click",redo);
+undoTool.addEventListener("click", undo);
+redoTool.addEventListener("click", redo);
 
-download.addEventListener("click",function(){
+download.addEventListener("click", function () {
     let imgData = canvas.toDataURL();
     let img = document.createElement('a');
-    img.setAttribute('href',imgData);
-    img.setAttribute('download',"download.jpeg");
+    img.setAttribute('href', imgData);
+    img.setAttribute('download', "download.jpeg");
     img.click();
 })
 
@@ -69,13 +69,14 @@ function saveState(list, keep_redo) {
     if (!keep_redo) {
         redo_list = [];
     }
-
+    console.log(list || undo_list);
     (list || undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 function restoreState(pop, push) {
     if (pop.length) {
         saveState(push, true);
         var restore_state = pop.pop();
+        // push.push(restore_state);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.putImageData(restore_state, 0, 0);
     }
@@ -87,6 +88,7 @@ function redo() {
     restoreState(redo_list, undo_list);
 }
 
+let mousemove = false;
 
 canvas.addEventListener("mousedown", function (e) {
 
@@ -97,7 +99,7 @@ canvas.addEventListener("mousedown", function (e) {
     ctx.beginPath();
     ctx.moveTo(initialXPosition, initialYPosition);
 
-    saveState();
+    // saveState();
     drawing = true;
 
 })
@@ -110,18 +112,21 @@ canvas.addEventListener("mousemove", function (e) {
 
     if (drawing) {
         if (mode === "pen") {
+            mousemove =true;
             ctx.strokeStyle = color;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = size;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "eraser") {
+            mousemove =true;
             ctx.strokeStyle = "#ffffff"
             ctx.lineWidth = size;
             ctx.globalCompositeOperation = "source-atop";
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {
+            mousemove =true;
             ctx.strokeStyle = "#ff0";
             ctx.lineWidth = size;
             ctx.globalCompositeOperation = "multiply";
@@ -133,17 +138,21 @@ canvas.addEventListener("mousemove", function (e) {
 })
 
 canvas.addEventListener("mouseup", function (e) {
+    if(drawing && mousemove){
+        saveState();
+    }
+    mousemove =false;
     drawing = false;
 })
 
 
-window.addEventListener("keydown",function(e){
+window.addEventListener("keydown", function (e) {
 
-    if(e.ctrlKey && e.key==='z'){
+    if (e.ctrlKey && e.key === 'z') {
         undo();
     }
-    if(e.ctrlKey && e.key==='y'){
+    if (e.ctrlKey && e.key === 'y') {
         redo();
     }
-    
+
 })
