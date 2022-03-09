@@ -29,6 +29,8 @@ sizeSlider.addEventListener("input", function (e) {
 
 reset.addEventListener("click", function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    redo_list=[];
+    undo_list=[];
     saveState();
 })
 
@@ -63,14 +65,9 @@ let xdeviation = canvas.offsetLeft;
 let ydeviation = canvas.offsetTop;
 let redo_list = [];
 let undo_list = [];
-
-function saveState(list, keep_redo) {
-    keep_redo = keep_redo || false;
-    if (!keep_redo) {
-        redo_list = [];
-    }
-    console.log(list || undo_list);
-    (list || undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+saveState();
+function saveState() {
+    (undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 function restoreState(pop, push) {
     if (pop.length) {
@@ -82,14 +79,30 @@ function restoreState(pop, push) {
     }
 }
 function undo() {
-    restoreState(undo_list, redo_list);
+    if (undo_list.length == 1) {
+        return;
+    }
+    var redo_state = undo_list.pop();
+    var restore_state = undo_list[undo_list.length - 1];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.putImageData(restore_state, 0, 0);
+    redo_list.push(redo_state);
+
+    // }
 }
 function redo() {
-    restoreState(redo_list, undo_list);
+    // restoreState(redo_list, undo_list);
+    if (redo_list.length) {
+        var restore_state = redo_list.pop();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.putImageData(restore_state, 0, 0);
+        undo_list.push(restore_state);
+    }
+
 }
 
 let mousemove = false;
-
+let mouseup = true;
 canvas.addEventListener("mousedown", function (e) {
 
     initialXPosition = e.clientX - xdeviation;
@@ -99,7 +112,10 @@ canvas.addEventListener("mousedown", function (e) {
     ctx.beginPath();
     ctx.moveTo(initialXPosition, initialYPosition);
 
-    // saveState();
+    // if (mouseup) {
+    //     saveState();
+    //     mouseup = false;
+    // }
     drawing = true;
 
 })
@@ -112,21 +128,24 @@ canvas.addEventListener("mousemove", function (e) {
 
     if (drawing) {
         if (mode === "pen") {
-            mousemove =true;
+            mousemove = true;
+            // mouseup = false;
             ctx.strokeStyle = color;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = size;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "eraser") {
-            mousemove =true;
+            mousemove = true;
+            // mouseup = false;
             ctx.strokeStyle = "#ffffff"
             ctx.lineWidth = size;
             ctx.globalCompositeOperation = "source-atop";
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {
-            mousemove =true;
+            mousemove = true;
+            // mouseup = false;
             ctx.strokeStyle = "#ff0";
             ctx.lineWidth = size;
             ctx.globalCompositeOperation = "multiply";
@@ -138,10 +157,13 @@ canvas.addEventListener("mousemove", function (e) {
 })
 
 canvas.addEventListener("mouseup", function (e) {
-    if(drawing && mousemove){
+    if (mousemove) {
+        mouseup = true;
+        mousemove = false;
+        redo_list = [];
         saveState();
     }
-    mousemove =false;
+    mousemove = false;
     drawing = false;
 })
 

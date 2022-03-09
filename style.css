@@ -14,4 +14,6 @@
 canvas{
     cursor: crosshair;
 }
-
+body{
+    overflow: hidden;
+}
