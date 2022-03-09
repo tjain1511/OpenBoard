@@ -29,6 +29,7 @@ sizeSlider.addEventListener("input",function(e){
 
 reset.addEventListener("click",function(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    saveState();
 })
 
 bucket.addEventListener("input",function(e){
@@ -116,13 +117,13 @@ canvas.addEventListener("mousemove", function (e) {
             ctx.stroke();
         } else if (mode === "eraser") {
             ctx.strokeStyle = "#ffffff"
-            ctx.lineWidth = 25;
+            ctx.lineWidth = size;
             ctx.globalCompositeOperation = "source-atop";
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {
             ctx.strokeStyle = "#ff0";
-            ctx.lineWidth = 25;
+            ctx.lineWidth = size;
             ctx.globalCompositeOperation = "multiply";
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
