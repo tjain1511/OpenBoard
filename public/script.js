@@ -19,12 +19,12 @@ socket.on('server data emit', function (data) {
 });
 
 function loadBoard(restore_state) {
+    console.log(restore_state)
     let img = document.createElement('img');
     img.setAttribute('src', restore_state);
     img.onload = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
-
     }
 }
 let initialXPosition;
@@ -93,7 +93,9 @@ saveState();
 function saveState() {
     let imageData = canvas.toDataURL();
     undo_list.push(imageData);
-    socket.emit("screen_state", imageData, roomId);
+    if (name === "admin") //dummy admin mode (to use set name admin)
+        socket.emit("screen_state", imageData, roomId);
+
 }
 
 function undo() {
@@ -103,7 +105,8 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     loadBoard(restore_state);
-    socket.emit("screen_state", restore_state, roomId);
+    if (name === "admin") //dummy admin mode (to use set name admin)
+        socket.emit("screen_state", restore_state, roomId);
     redo_list.push(redo_state);
 
 }
@@ -112,7 +115,8 @@ function redo() {
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         loadBoard(restore_state);
-        socket.emit("screen_state", restore_state, roomId);
+        if (name === "admin") //dummy admin mode (to use set name admin)
+            socket.emit("screen_state", restore_state, roomId);
         undo_list.push(restore_state);
     }
 
@@ -143,7 +147,7 @@ canvas.addEventListener("mousemove", function (e) {
         if (mode === "pen") {
             mousemove = true;
             ctx.strokeStyle = color;
-            // ctx.globalCompositeOperation = "source-over";
+            ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = size;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
@@ -151,7 +155,7 @@ canvas.addEventListener("mousemove", function (e) {
             mousemove = true;
             ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = size;
-            // ctx.globalCompositeOperation = "source-atop"; //yha dikkt h
+            ctx.globalCompositeOperation = "source-atop"; //if we don't chnage this to source-over then everything is drawn on sourceatop mode
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {
@@ -163,6 +167,7 @@ canvas.addEventListener("mousemove", function (e) {
             ctx.stroke();
         }
     }
+    ctx.globalCompositeOperation = "source-over";
 
 })
 
