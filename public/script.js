@@ -1,6 +1,16 @@
 
 const socket = io();
-socket.on('server emit',(msg)=>console.log(msg));
+
+
+socket.on('server data emit', function (data) {
+
+    let img = document.createElement('img');
+
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0);
+    }
+    img.setAttribute('src', data);
+});
 
 let canvas = document.querySelector("#board");
 let ctx = canvas.getContext('2d');
@@ -33,11 +43,10 @@ sizeSlider.addEventListener("input", function (e) {
 
 reset.addEventListener("click", function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    redo_list=[];
-    undo_list=[];
+    redo_list = [];
+    undo_list = [];
     saveState();
 
-    socket.emit('send data','this is emitted');
 })
 
 bucket.addEventListener("input", function (e) {
@@ -73,17 +82,13 @@ let redo_list = [];
 let undo_list = [];
 saveState();
 function saveState() {
-    (undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    // (undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    let imageData = canvas.toDataURL();
+    undo_list.push(imageData);
+    socket.emit("screen_state", imageData);
+
 }
-function restoreState(pop, push) {
-    if (pop.length) {
-        saveState(push, true);
-        var restore_state = pop.pop();
-        // push.push(restore_state);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.putImageData(restore_state, 0, 0);
-    }
-}
+
 function undo() {
     if (undo_list.length == 1) {
         return;
@@ -91,17 +96,34 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(restore_state, 0, 0);
-    redo_list.push(redo_state);
+    // ctx.putImageData(restore_state, 0, 0);
+    let img = document.createElement('img');
 
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0);
+        socket.emit('screen_state',restore_state);
+    }
+    img.setAttribute('src', restore_state);
+
+    redo_list.push(redo_state);
+    
     // }
 }
 function redo() {
-    // restoreState(redo_list, undo_list);
+
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.putImageData(restore_state, 0, 0);
+        // ctx.putImageData(restore_state, 0, 0);
+        let img = document.createElement('img');
+
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+            socket.emit("screen_state", restore_state);
+        }
+        img.setAttribute('src', restore_state);
+
+        
         undo_list.push(restore_state);
     }
 
@@ -144,9 +166,9 @@ canvas.addEventListener("mousemove", function (e) {
         } else if (mode === "eraser") {
             mousemove = true;
             // mouseup = false;
-            ctx.strokeStyle = "#ffffff"
+            ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = size;
-            ctx.globalCompositeOperation = "source-atop";
+            // ctx.globalCompositeOperation = "source-atop";
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {

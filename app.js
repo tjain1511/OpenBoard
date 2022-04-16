@@ -10,11 +10,9 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('send data', (msg) => {
-        console.log('message: ' + msg);
-        socket.broadcast.emit('server emit', 'this is from server');
-        // io.emit('server emit', 'from server');
-    });
+    socket.on('screen_state', (data) => {
+        socket.broadcast.emit('server data emit', data);
+    })
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
