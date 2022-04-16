@@ -8,25 +8,18 @@ canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
 socket.on('server data emit', function (data) {
-
-    let img = document.createElement('img');
-
-    img.onload = function () {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-    }
-    img.setAttribute('src', data);
+    loadBoard(data);
 });
 
 function loadBoard(restore_state) {
     let img = document.createElement('img');
-
+    img.setAttribute('src', restore_state);
     img.onload = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
-        socket.emit("screen_state", restore_state);
+
     }
-    img.setAttribute('src', restore_state);
+
 }
 let initialXPosition;
 let initialYPosition;
@@ -104,6 +97,7 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     loadBoard(restore_state);
+    socket.emit("screen_state", restore_state);
     redo_list.push(redo_state);
 
 }
@@ -112,6 +106,7 @@ function redo() {
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         loadBoard(restore_state);
+        socket.emit("screen_state", restore_state);
         undo_list.push(restore_state);
     }
 
@@ -142,7 +137,7 @@ canvas.addEventListener("mousemove", function (e) {
         if (mode === "pen") {
             mousemove = true;
             ctx.strokeStyle = color;
-            ctx.globalCompositeOperation = "source-over";
+            // ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = size;
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
@@ -150,7 +145,7 @@ canvas.addEventListener("mousemove", function (e) {
             mousemove = true;
             ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = size;
-            // ctx.globalCompositeOperation = "source-atop";
+            // ctx.globalCompositeOperation = "source-atop"; //yha dikkt h
             ctx.lineTo(finalX, finalY);
             ctx.stroke();
         } else if (mode === "highlighter") {
