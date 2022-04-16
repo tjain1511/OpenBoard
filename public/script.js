@@ -1,6 +1,13 @@
+const { name, roomId } = Qs.parse(location.search, {
+    ignoreQueryPrefix: true,
+});
+const socket = io({
+    query: {
+        roomId: roomId,
+    },
+});
 
-const socket = io();
-
+console.log(name, roomId);
 let canvas = document.querySelector("#board");
 let ctx = canvas.getContext('2d');
 
@@ -19,7 +26,6 @@ function loadBoard(restore_state) {
         ctx.drawImage(img, 0, 0);
 
     }
-
 }
 let initialXPosition;
 let initialYPosition;
@@ -87,7 +93,7 @@ saveState();
 function saveState() {
     let imageData = canvas.toDataURL();
     undo_list.push(imageData);
-    socket.emit("screen_state", imageData);
+    socket.emit("screen_state", imageData, roomId);
 }
 
 function undo() {
@@ -97,7 +103,7 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     loadBoard(restore_state);
-    socket.emit("screen_state", restore_state);
+    socket.emit("screen_state", restore_state, roomId);
     redo_list.push(redo_state);
 
 }
@@ -106,7 +112,7 @@ function redo() {
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         loadBoard(restore_state);
-        socket.emit("screen_state", restore_state);
+        socket.emit("screen_state", restore_state, roomId);
         undo_list.push(restore_state);
     }
 
