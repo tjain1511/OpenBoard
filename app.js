@@ -20,6 +20,10 @@ io.on('connection', (socket) => {
 });
 
 
+app.get('/board',function(req,res){
+    res.sendFile(__dirname + '/public/board.html');
+})
+
 server.listen('3000', function () {
     console.log("hello");
 })
