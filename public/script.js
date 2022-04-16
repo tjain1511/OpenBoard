@@ -1,23 +1,33 @@
 
 const socket = io();
 
-
-socket.on('server data emit', function (data) {
-
-    let img = document.createElement('img');
-
-    img.onload = function () {
-        ctx.drawImage(img, 0, 0);
-    }
-    img.setAttribute('src', data);
-});
-
 let canvas = document.querySelector("#board");
 let ctx = canvas.getContext('2d');
 
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
+socket.on('server data emit', function (data) {
+
+    let img = document.createElement('img');
+
+    img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+    }
+    img.setAttribute('src', data);
+});
+
+function loadBoard(restore_state) {
+    let img = document.createElement('img');
+
+    img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        socket.emit("screen_state", restore_state);
+    }
+    img.setAttribute('src', restore_state);
+}
 let initialXPosition;
 let initialYPosition;
 let drawing = false;
@@ -82,11 +92,9 @@ let redo_list = [];
 let undo_list = [];
 saveState();
 function saveState() {
-    // (undo_list).push(ctx.getImageData(0, 0, canvas.width, canvas.height));
     let imageData = canvas.toDataURL();
     undo_list.push(imageData);
     socket.emit("screen_state", imageData);
-
 }
 
 function undo() {
@@ -95,35 +103,15 @@ function undo() {
     }
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // ctx.putImageData(restore_state, 0, 0);
-    let img = document.createElement('img');
-
-    img.onload = function () {
-        ctx.drawImage(img, 0, 0);
-        socket.emit('screen_state',restore_state);
-    }
-    img.setAttribute('src', restore_state);
-
+    loadBoard(restore_state);
     redo_list.push(redo_state);
-    
-    // }
+
 }
 function redo() {
 
     if (redo_list.length) {
         var restore_state = redo_list.pop();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.putImageData(restore_state, 0, 0);
-        let img = document.createElement('img');
-
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-            socket.emit("screen_state", restore_state);
-        }
-        img.setAttribute('src', restore_state);
-
-        
+        loadBoard(restore_state);
         undo_list.push(restore_state);
     }
 
@@ -140,10 +128,6 @@ canvas.addEventListener("mousedown", function (e) {
     ctx.beginPath();
     ctx.moveTo(initialXPosition, initialYPosition);
 
-    // if (mouseup) {
-    //     saveState();
-    //     mouseup = false;
-    // }
     drawing = true;
 
 })
@@ -157,7 +141,6 @@ canvas.addEventListener("mousemove", function (e) {
     if (drawing) {
         if (mode === "pen") {
             mousemove = true;
-            // mouseup = false;
             ctx.strokeStyle = color;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = size;
@@ -165,7 +148,6 @@ canvas.addEventListener("mousemove", function (e) {
             ctx.stroke();
         } else if (mode === "eraser") {
             mousemove = true;
-            // mouseup = false;
             ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = size;
             // ctx.globalCompositeOperation = "source-atop";
@@ -173,7 +155,6 @@ canvas.addEventListener("mousemove", function (e) {
             ctx.stroke();
         } else if (mode === "highlighter") {
             mousemove = true;
-            // mouseup = false;
             ctx.strokeStyle = "#ff0";
             ctx.lineWidth = size;
             ctx.globalCompositeOperation = "multiply";
