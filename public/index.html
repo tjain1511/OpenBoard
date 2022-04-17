@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room</title>
 </head>
-<body>
-    
 
-    <form action="/board.html">
+<body>
+
+
+    <form method="post" enctype="application/x-www-form-urlencoded">
 
         <fieldset>
-            <legend>Enter room details</legend>
+            <legend>Enter Room Details</legend>
 
             <label for="name">Enter your name:</label>
             <input type="text" id="name" name="name"><br>
-            
-            <label for="roomId">Enter room id:</label>
-            <input type="number" id="roomId" name="roomId"><br>
 
-            <input type="submit" >
+            <label for="roomId">Enter room id:</label>
+            <input type="number" id="roomId" name="roomId" required><br>
+
+            <input type="submit">
         </fieldset>
 
     </form>
 
 </body>
+
 </html>
