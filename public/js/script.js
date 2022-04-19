@@ -91,7 +91,7 @@ saveState();
 function saveState() {
     let imageData = canvas.toDataURL();
     undo_list.push(imageData);
-    if (name === "admin") //dummy admin mode (to use set name admin)
+    if (nameOfUser === "admin") //dummy admin mode (to use set name admin)
         socket.emit("screen_state", imageData, roomId);
 
 }
@@ -103,7 +103,7 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     loadBoard(restore_state);
-    if (name === "admin") //dummy admin mode (to use set name admin)
+    if (nameOfUser === "admin") //dummy admin mode (to use set name admin)
         socket.emit("screen_state", restore_state, roomId);
     redo_list.push(redo_state);
 
@@ -113,7 +113,7 @@ function redo() {
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         loadBoard(restore_state);
-        if (name === "admin") //dummy admin mode (to use set name admin)
+        if (nameOfUser === "admin") //dummy admin mode (to use set name admin)
             socket.emit("screen_state", restore_state, roomId);
         undo_list.push(restore_state);
     }
