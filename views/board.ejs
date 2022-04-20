@@ -14,56 +14,77 @@
 </head>
 
 <body>
+  <div class="container">
+    <div class="row">
+      <div class="col-3">
+           <div class="card border mt-2 p-2">
+                <p>Name (<%-role%>) : <%-name%></p>
+                <p>Room Id : <%-roomId%> </p>
+           </div>
+           <div class="card mt-2 mb-2 p-2 chat" >     
+            <div class="msg-text" id="msg-text">
 
-  <div class="container-fluid toolbox">
-    <div class="row row-cols-auto row-cols-sm-auto d-flex justify-content-lg-center">
-      <div class="col tool" id="undo">
-        <img src="icons/outline_undo_white_48dp.png" alt="">
+            </div>     
+            <div class="card-footer">
+              <input type="text" class="form-control" id="msg" placeholder="Type Message ...">
+              <button class="btn btn-primary mt-2" id="send-btn">Send</button>
+            </div>
+             
+           </div>
       </div>
-      <div class="col tool" id="redo">
-        <img src="icons/outline_redo_white_48dp.png" alt="">
+      <div class="col-9">
+          <div class="container-fluid toolbox">
+            <div class="row row-cols-auto row-cols-sm-auto d-flex justify-content-lg-center">
+              <div class="col tool" id="undo">
+                <img src="icons/outline_undo_white_48dp.png" alt="">
+              </div>
+              <div class="col tool" id="redo">
+                <img src="icons/outline_redo_white_48dp.png" alt="">
+              </div>
+        
+              <div class="col tool" id="eraser">
+                <img src="icons/rubber.svg" alt="">
+              </div>
+              <div class="col tool" id="pen">
+                <img src="icons/pen_1.svg" id="pen" alt="">
+              </div>
+              <div class="col tool" id="highlighter">
+                <img src="icons/highlighter.svg" alt="">
+              </div>
+              <div class="col tool">
+                <img src="icons/pen.svg" alt="">
+              </div>
+              <div class="col tool">
+                <img src="icons/pen_2.svg" alt="">
+              </div>
+              <div class="col tool">
+                <img src="icons/pen.svg" alt="">
+              </div>
+              <div class="col tool">
+                <img src="icons/pen.svg" alt="">
+              </div>
+              <div class="col tool">
+                <img src="icons/pen.svg" alt="">
+              </div>
+              <div class="col tool" id="reset">
+                <img src="icons/clear.svg" alt="">
+              </div>
+              <div class="col tool" id="download">
+                <img src="icons/download.svg" alt="">
+              </div>
+              <div>
+                <input type="color" name="" id="bucket" value="#000000">
+              </div>
+              <input type="range" min="1" max="20" value="5" class="slider" id="size">
+            </div>
+          </div>
+        
+          <canvas id="board"></canvas>
       </div>
-
-      <div class="col tool" id="eraser">
-        <img src="icons/rubber.svg" alt="">
-      </div>
-      <div class="col tool" id="pen">
-        <img src="icons/pen_1.svg" id="pen" alt="">
-      </div>
-      <div class="col tool" id="highlighter">
-        <img src="icons/highlighter.svg" alt="">
-      </div>
-      <div class="col tool">
-        <img src="icons/pen.svg" alt="">
-      </div>
-      <div class="col tool">
-        <img src="icons/pen_2.svg" alt="">
-      </div>
-      <div class="col tool">
-        <img src="icons/pen.svg" alt="">
-      </div>
-      <div class="col tool">
-        <img src="icons/pen.svg" alt="">
-      </div>
-      <div class="col tool">
-        <img src="icons/pen.svg" alt="">
-      </div>
-      <div class="col tool" id="reset">
-        <img src="icons/clear.svg" alt="">
-      </div>
-      <div class="col tool" id="download">
-        <img src="icons/download.svg" alt="">
-      </div>
-      <div>
-        <input type="color" name="" id="bucket" value="#000000">
-      </div>
-      <input type="range" min="1" max="20" value="5" class="slider" id="size">
     </div>
-
-
   </div>
-
-  <canvas id="board"></canvas>
+  
+  
 
 
   <!-- Bootstrap scripts -->
@@ -76,6 +97,7 @@
     <script>
       let nameOfUser = '<%-name%>'
       let roomId = '<%-roomId%>'
+      let role = '<%-role%>'
     </script>
   <script src="./js/script.js"></script>
 </body>
