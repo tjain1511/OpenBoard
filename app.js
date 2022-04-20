@@ -27,6 +27,11 @@ io.on('connection', (socket) => {
         socket.to(roomId).emit('server data emit', data);
     })
 
+    socket.on('send-msg',(msg,sender)=>{
+        console.log(msg,sender);
+        socket.to(roomId).emit('receive-msg', msg,sender);
+    })
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
     })
@@ -43,6 +48,7 @@ app.post('/', function (req, res) {
     let details = {
         'name': req.body.name,
         'roomId': req.body.roomId,
+        'role' : req.body.role,
     }
 
     res.render('board', details);

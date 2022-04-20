@@ -17,3 +17,29 @@ canvas{
 body{
     overflow: hidden;
 }
+
+.col-3{
+    height: 100vh;
+}
+
+.col-9{
+    height: 100vh;
+    border: 1px solid grey;
+    
+}
+
+.container{
+    max-width: 100%;
+}
+.chat{
+    height: 100%;
+}
+
+.msg-type{
+    margin-bottom: 0;
+}
+
+.msg-text{
+    height: 500px;
+    overflow: auto;
+}
