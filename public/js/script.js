@@ -5,6 +5,9 @@ const socket = io({
     },
 });
 
+
+
+
 console.log(nameOfUser, roomId);
 let canvas = document.querySelector("#board");
 let ctx = canvas.getContext('2d');
