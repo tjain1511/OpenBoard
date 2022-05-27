@@ -1,60 +1,60 @@
 
-const socket = io({
-    query: {
-        roomId: roomId,
-    },
-});
+// const socket = io({
+//     query: {
+//         roomId: roomId,
+//         //userId: userId
+//     },
+// });
 
 
 
 
-console.log(nameOfUser, roomId);
-let canvas = document.querySelector("#board");
-let ctx = canvas.getContext('2d');
+// let canvas = document.querySelector("#board");
+// let ctx = canvas.getContext('2d');
 
-canvas.style.width ='100%';
-canvas.style.height='100%';
-canvas.width  = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+// canvas.style.width ='100%';
+// canvas.style.height='100%';
+// canvas.width  = canvas.offsetWidth;
+// canvas.height = canvas.offsetHeight;
 
-document.getElementById("send-btn").addEventListener("click",function sendMsg(){
-    var msg = document.getElementById("msg").value;
-    if(msg!=""){
-        console.log(msg);
-        socket.emit("send-msg",msg,nameOfUser);
-        document.getElementById("msg").value = "";
-        var msgBox = document.createElement("div");
-      msgBox.className = "card p-1 m-1 border"
-     msgBox.innerHTML = `<div class='card-header'> You </div> <p>${msg}</p>`
-     document.getElementById("msg-text").appendChild(msgBox);
-    }
-});
-
+// document.getElementById("send-btn").addEventListener("click",function sendMsg(){
+//     var msg = document.getElementById("msg").value;
+//     if(msg!=""){
+//         console.log(msg);
+//         socket.emit("send-msg",msg,nameOfUser);
+//         document.getElementById("msg").value = "";
+//         var msgBox = document.createElement("div");
+//       msgBox.className = "card p-1 m-1 border"
+//      msgBox.innerHTML = `<div class='card-header'> You </div> <p>${msg}</p>`
+//      document.getElementById("msg-text").appendChild(msgBox);
+//     }
+// });
 
 
 
-socket.on('receive-msg',(msg,sender)=>{
-    var msgBox = document.createElement("div");
-    msgBox.className = "card p-1 m-1 border"
-    msgBox.innerHTML = `<div class='card-header'>${sender}</div> <p>${msg}</p>`
-    console.log(msg);
-    console.log(msgBox)
-    document.getElementById("msg-text").appendChild(msgBox);
-})
 
-socket.on('server data emit', function (data) {
-    loadBoard(data);
-});
+// socket.on('receive-msg',(msg,sender)=>{
+//     var msgBox = document.createElement("div");
+//     msgBox.className = "card p-1 m-1 border"
+//     msgBox.innerHTML = `<div class='card-header'>${sender}</div> <p>${msg}</p>`
+//     console.log(msg);
+//     console.log(msgBox)
+//     document.getElementById("msg-text").appendChild(msgBox);
+// })
 
-function loadBoard(restore_state) {
-    console.log(restore_state)
-    let img = document.createElement('img');
-    img.setAttribute('src', restore_state);
-    img.onload = function () {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-    }
-}
+// socket.on('server data emit', function (data) {
+//     loadBoard(data);
+// });
+
+// function loadBoard(restore_state) {
+//     console.log(restore_state)
+//     let img = document.createElement('img');
+//     img.setAttribute('src', restore_state);
+//     img.onload = function () {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+//         ctx.drawImage(img, 0, 0);
+//     }
+// }
 let initialXPosition;
 let initialYPosition;
 let drawing = false;
@@ -121,7 +121,7 @@ saveState();
 function saveState() {
     let imageData = canvas.toDataURL();
     undo_list.push(imageData);
-    if (role === "admin") //dummy admin mode (to use set name admin)
+    //if (role === "admin") //dummy admin mode (to use set name admin)
         socket.emit("screen_state", imageData, roomId);
 
 }
@@ -133,7 +133,7 @@ function undo() {
     var redo_state = undo_list.pop();
     var restore_state = undo_list[undo_list.length - 1];
     loadBoard(restore_state);
-    if (role === "admin") //dummy admin mode (to use set name admin)
+    //if (role === "admin") //dummy admin mode (to use set name admin)
         socket.emit("screen_state", restore_state, roomId);
     redo_list.push(redo_state);
 
@@ -143,7 +143,7 @@ function redo() {
     if (redo_list.length) {
         var restore_state = redo_list.pop();
         loadBoard(restore_state);
-        if (role === "admin") //dummy admin mode (to use set name admin)
+        //if (role === "admin") //dummy admin mode (to use set name admin)
             socket.emit("screen_state", restore_state, roomId);
         undo_list.push(restore_state);
     }
