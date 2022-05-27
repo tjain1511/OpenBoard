@@ -10,6 +10,7 @@ peer.on('call', function (call) {
     call.answer(mediaStream);
 
     call.on('stream', function (stream) {
+        console.log(mediaStream);
         // `stream` is the MediaStream of the remote peer.
         // Here you'd add it to an HTML video/canvas element.
         const video = document.getElementById('webcam2');
@@ -23,7 +24,7 @@ async function getMedia(constraints) {
     try {
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
         /* use the stream */
-
+            console.log(mediaStream);
         const video = document.getElementById('webcam1');
         video.autoplay = true;
         video.srcObject = mediaStream;
