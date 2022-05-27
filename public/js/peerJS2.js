@@ -13,7 +13,7 @@ let mediaStream = null;
         video.srcObject = mediaStream;
 
         
-        var call = await peer.call(adminId, mediaStream);
+        var call = peer.call(adminId, mediaStream);
         
 
         call.on('stream', function (stream) {
