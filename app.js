@@ -9,22 +9,29 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
 const map1 = new Map();
+const adminMap = new Map();
+
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    console.log('a user connected : ' + socket.id);
+
 
     let query = socket.handshake.query;
     let roomId = query.roomId;
 
     socket.join(roomId);
     if (map1.has(roomId)) {
-        io.to(socket.id).emit('server data emit', map1.get(roomId));
+        io.to(socket.id).emit('server_data', map1.get(roomId));
     }
 
+    socket.on('admin',(id)=>{
+        adminMap.set(roomId,id);
+        console.log(adminMap);
+    })
 
     socket.on('screen_state', (data, roomId) => {
         map1.set(roomId, data);
-        socket.to(roomId).emit('server data emit', data);
+        socket.to(roomId).emit('server_data', data);
     })
 
     socket.on('send-msg',(msg,sender)=>{
@@ -51,7 +58,12 @@ app.post('/', function (req, res) {
         'role' : req.body.role,
     }
 
-    res.render('board', details);
+    if(details.role === 'admin'){
+        res.render('board', details);
+    }else{
+        details.adminId = adminMap.get(details.roomId);
+        res.render('userBoard',details);
+    }
 })
 
 
