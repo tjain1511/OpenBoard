@@ -35,7 +35,7 @@ async function getMedia(constraints) {
 }
 
 
-getMedia({ audio: false, video: true })
+getMedia({ audio: true, video: true })
 
 
 
