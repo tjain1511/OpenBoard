@@ -3,27 +3,46 @@
 
     try {
         let mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
         /* use the stream */
-        const peer = new Peer();
-        const video = document.getElementById('webcam1');
-        video.autoplay = true;
+        
+        const webcams = document.querySelector(".webcams");
+        const video = document.createElement('video');
+        video.setAttribute("id", mediaStream.id);
+        video.setAttribute("height", "120");
+        video.setAttribute("width", "120");
         video.srcObject = mediaStream;
+        video.muted = true;
+        video.autoplay = true;
+        webcams.appendChild(video);
 
-         var call;
+        const peer = new Peer();
+        var call;
 
-         setTimeout(() => {
-            call = peer.call(adminId, mediaStream);
+        setTimeout(() => {
+            call = peer.call(adminId, mediaStream);;
+
             call.on('stream', function (stream) {
-             console.log("in user ")
-             const video = document.getElementById('webcam2');
-             video.srcObject = stream;
-             video.autoplay = true;
-         },function(err) {
-             console.log('Failed to get local stream' ,err);
-           });
-         }, 2000);
 
-        } catch (err) {
+                const video = document.getElementById(stream.id);
+                if(video==null){
+                    const video = document.createElement('video');
+                    video.setAttribute("id", stream.id);
+                    video.setAttribute("height", "120");
+                    video.setAttribute("width", "120");
+                    video.srcObject = stream;
+                    video.autoplay = true;
+                    webcams.appendChild(video);
+                }else{
+                    video.srcObject = stream;
+                }
+
+            }, function (err) {
+                console.log('Failed to get local stream', err);
+            });
+        }, 2000);
+
+    } catch (err) {
         /* handle the error */
         console.log("error");
         console.log(err);
