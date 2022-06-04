@@ -9,8 +9,6 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
 const map1 = new Map();
-const adminMap = new Map();
-
 
 io.on('connection', (socket) => {
     console.log('a user connected : ' + socket.id);
@@ -19,24 +17,26 @@ io.on('connection', (socket) => {
     let query = socket.handshake.query;
     let roomId = query.roomId;
 
+
     socket.join(roomId);
+
+
     if (map1.has(roomId)) {
         io.to(socket.id).emit('server_data', map1.get(roomId));
     }
-
-    socket.on('admin',(id)=>{
-        adminMap.set(roomId,id);
-        console.log(adminMap);
-    })
 
     socket.on('screen_state', (data, roomId) => {
         map1.set(roomId, data);
         socket.to(roomId).emit('server_data', data);
     })
 
-    socket.on('send-msg',(msg,sender)=>{
-        console.log(msg,sender);
-        socket.to(roomId).emit('receive-msg', msg,sender);
+    socket.on('send-msg', (msg, sender) => {
+        console.log(msg, sender);
+        socket.to(roomId).emit('receive-msg', msg, sender);
+    })
+
+    socket.on('peerId', (roomId, id) => {
+        socket.broadcast.to(roomId).emit('new-peer', id);
     })
 
     socket.on('disconnect', () => {
@@ -51,18 +51,17 @@ app.post('/', function (req, res) {
 
 
     //if validated
-    
+
     let details = {
         'name': req.body.name,
         'roomId': req.body.roomId,
-        'role' : req.body.role,
+        'role': req.body.role,
     }
 
-    if(details.role === 'admin'){
+    if (details.role === 'admin') {
         res.render('board', details);
-    }else{
-        details.adminId = adminMap.get(details.roomId);
-        res.render('userBoard',details);
+    } else {
+        res.render('userBoard', details);
     }
 })
 
@@ -70,6 +69,6 @@ app.post('/', function (req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
-server.listen(process.env.PORT ||'3000', function () {
+server.listen(process.env.PORT || '3000', function () {
     console.log("Server started on port 3000");
 })

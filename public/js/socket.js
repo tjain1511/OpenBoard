@@ -1,8 +1,6 @@
-
 const socket = io({
     query: {
-        roomId: roomId,
-        //userId: userId
+        roomId,
     },
 });
 
