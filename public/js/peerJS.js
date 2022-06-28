@@ -1,21 +1,14 @@
 let mediaStream = null;
-const webcams = document.querySelector(".webcams");
+const videoList = document.querySelector("#video-list");
+const videoContainer = videoList.querySelector('.container');
 
 async function getMedia(constraints) {
 
     try {
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        const video = document.createElement('video');
-        video.setAttribute("id", mediaStream.id);
-        video.setAttribute("height", "120");
-        video.setAttribute("width", "120");
-        video.srcObject = mediaStream;
-        video.muted = true;
-        video.autoplay = true;
-        webcams.appendChild(video);
+        addVideo(mediaStream,true)
 
     } catch (err) {
-     
         console.log("error");
     }
 }
@@ -36,13 +29,7 @@ socket.on('new-peer', (id) => {
 
         const video = document.getElementById(stream.id);
         if (video == null) {
-            const video = document.createElement('video');
-            video.setAttribute("id", stream.id);
-            video.setAttribute("height", "120");
-            video.setAttribute("width", "120");
-            video.srcObject = stream;
-            video.autoplay = true;
-            webcams.appendChild(video);
+            addVideo(stream,false);
         } else {
             video.srcObject = stream;
         }
@@ -56,20 +43,51 @@ peer.on('call', function (call) {
     call.on('stream', function (stream) {
         const video = document.getElementById(stream.id);
         if (video == null) {
-            const video = document.createElement('video');
-            video.setAttribute("id", stream.id);
-            video.setAttribute("height", "120");
-            video.setAttribute("width", "120");
-            video.srcObject = stream;
-            video.autoplay = true;
-            webcams.appendChild(video);
+            addVideo(stream,false);
         } else {
             video.srcObject = stream;
         }
     });
 });
 
+function addVideo(stream,muted) {
+    const noOfVideo = document.getElementsByTagName('video');
 
+    if (noOfVideo.length % 2 == 0) {
+        const div = document.createElement('div');
+        div.setAttribute('class', 'row');
+        videoContainer.appendChild(div);
+
+        const col = document.createElement('div');
+        col.setAttribute('class','col');
+        div.appendChild(col);
+
+        const video = document.createElement('video');
+        video.setAttribute("id", stream.id);
+        video.setAttribute("height", "100%");
+        video.setAttribute("width", "100%");
+        video.srcObject = stream;
+        video.muted = muted;
+        video.autoplay = true;
+        col.appendChild(video);
+    } else {
+        let lastRow = videoContainer.querySelectorAll('.row');
+        lastRow = lastRow[lastRow.length - 1];
+
+        const col = document.createElement('div');
+        col.setAttribute('class','col');
+        lastRow.appendChild(col);
+
+        const video = document.createElement('video');
+        video.setAttribute("id", stream.id);
+        video.setAttribute("height", "100%");
+        video.setAttribute("width", "100%");
+        video.srcObject = stream;
+        video.muted = muted;
+        video.autoplay = true;
+        col.appendChild(video);
+    }
+}
 
 
 
