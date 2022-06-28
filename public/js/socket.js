@@ -19,7 +19,7 @@ document.getElementById("send-btn").addEventListener("click",function sendMsg(){
         socket.emit("send-msg",msg,nameOfUser);
         document.getElementById("msg").value = "";
         var msgBox = document.createElement("div");
-      msgBox.className = "card p-1 m-1 border"
+     msgBox.className = "card p-1 m-1 border"
      msgBox.innerHTML = `<div class='card-header'> You </div> <p>${msg}</p>`
      document.getElementById("msg-text").appendChild(msgBox);
     }
