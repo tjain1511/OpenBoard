@@ -57,11 +57,13 @@ app.post('/', function (req, res) {
         'roomId': req.body.roomId,
         'role': req.body.role,
     }
-
     if (details.role === 'admin') {
         res.render('board', details);
     } else {
-        res.render('userBoard', details);
+        if (map1.has(details.roomId))
+            res.render('userBoard', details);
+        else
+        res.send(`Room with Id ${details.roomId} doesn't exist :/ `)
     }
 })
 

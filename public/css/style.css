@@ -69,6 +69,9 @@ body {
 
 #video-list {
     height: 83%;
+    display: inline-block;
+}
+#chat-area{
     display: none;
 }
 
